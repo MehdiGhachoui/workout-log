@@ -5,38 +5,28 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/mehdighachoui/workout-log/config"
+	"github.com/mehdighachoui/workout-log/db"
+	"github.com/mehdighachoui/workout-log/pkg"
 )
 
-// type Log struct {
-// 	Weight    float64
-// 	Type      string
-// 	Exercices []*Exercice
-// }
-
-// {number}gg = jump to line number
-// L : move to next page ?
-// H : move to prev page ?
-
-// type Exercice struct {
-// 	Name   string
-// 	Goal   string
-// 	Reps   []int64
-// 	Weight []float64
-// }
-
 func main() {
+	_, err := db.CreatePostgresConnection()
 
-	config.Connect()
+	if err != nil {
+		log.Fatal("Database connection error:", err)
+	}
 	log.Println("Database connected")
 
 	app := fiber.New()
+	app.Use(cors.New())
 	app.Use(logger.New())
+
 	app.Get("/healthCheck", func(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusOK)
 	})
 
+	pkg.WorkoutHTTP(app)
 	log.Fatal(app.Listen(":8000"))
-
 }

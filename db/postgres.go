@@ -6,7 +6,7 @@ import (
 )
 
 func CreatePostgresConnection() (*gorm.DB, error) {
-	dsn := "host=localhost user=postgres password=12345 dbname=holis-database port=5432 sslmode=disable"
+	dsn := "host= user= password= dbname= port= sslmode=disable"
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {

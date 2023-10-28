@@ -1,14 +1,30 @@
 package pkg
 
+import (
+	"github.com/lib/pq"
+	"gorm.io/gorm"
+)
+
 type Log struct {
+	gorm.Model
+
 	Weight    float64
 	Type      string
-	Exercices []*Exercice
+	Exercices []Exercice
 }
 
 type Exercice struct {
-	Name   string
-	Goal   string
-	Reps   []int64
-	Weight []float64
+	gorm.Model
+
+	LogID   uint
+	Name    string
+	Goal    string
+	Reps    pq.Int64Array   `gorm:"type:integer[]"`
+	Weights pq.Float64Array `gorm:"type:float[]"`
+}
+
+type NewLogInput struct {
+	Weight   float64
+	Type     string
+	Exercice []Exercice
 }

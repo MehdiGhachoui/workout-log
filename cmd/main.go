@@ -2,31 +2,29 @@ package main
 
 import (
 	"log"
+
 	"net/http"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/mehdighachoui/workout-log/db"
-	"github.com/mehdighachoui/workout-log/pkg"
+	"github.com/a-h/templ"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/mehdighachoui/workout-log/internal/templates/pages"
+	// "github.com/mehdighachoui/workout-log/db"
+	// "github.com/mehdighachoui/workout-log/pkg"
 )
 
 func main() {
-	_, err := db.CreatePostgresConnection()
+	// _, err := db.CreatePostgresConnection()
+	// if err != nil {
+	// 	log.Fatal("Database connection error:", err)
+	// }
+	// log.Println("Database connected")
 
-	if err != nil {
-		log.Fatal("Database connection error:", err)
-	}
-	log.Println("Database connected")
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
-	app := fiber.New()
-	app.Use(cors.New())
-	app.Use(logger.New())
+	r.Get("/", templ.Handler(pages.Home()).ServeHTTP)
 
-	app.Get("/healthCheck", func(c *fiber.Ctx) error {
-		return c.SendStatus(http.StatusOK)
-	})
-
-	pkg.WorkoutHTTP(app)
-	log.Fatal(app.Listen(":8000"))
+	// pkg.WorkoutHTTP(app)
+	log.Fatal(http.ListenAndServe(":8000", r))
 }

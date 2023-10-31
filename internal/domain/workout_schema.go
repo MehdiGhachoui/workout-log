@@ -1,4 +1,4 @@
-package pkg
+package domain
 
 import (
 	"github.com/lib/pq"
